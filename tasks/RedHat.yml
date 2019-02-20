@@ -1,0 +1,77 @@
+---
+
+- name: FAIL | If there are missing parameters
+  fail:
+    msg: "Missing parameter"
+  with_items: "{{ linux_package_sources_yum }}"
+  when: ( item.mirrorlist is undefined and item.baseurl is undefined ) or ( item.gpgcheck is defined and item.gpgcheck == true and item.gpgkey is undefined )
+
+- name: FILE | Remove default repo files
+  become: true
+  become_user: root
+  file:
+    path: /etc/yum.repos.d/{{ item }}
+    state: absent
+  with_items:
+    - CentOS-Base.repo
+    - CentOS-CR.repo
+    - CentOS-Debuginfo.repo
+    - CentOS-fasttrack.repo
+    - CentOS-Media.repo
+    - CentOS-Sources.repo
+    - CentOS-Vault.repo
+    - redhat.repo
+    - rh-cloud.repo
+
+- name: FAIL | Fail if baseurl and mirrorlist are both defined
+  fail:
+    msg: "Only mirrorlist OR baseurl can be defined"
+  when: item.mirrorlist is defined and item.baseurl is defined
+  with_items: "{{ linux_package_sources_yum }}"
+
+- name: YUM_REPOSITORY | Configure yum sources
+  become: true
+  become_user: root
+  yum_repository:
+    name: "{{ item.name}}"
+    description: "{{ item.name}}"
+    mirrorlist: "{{ item.mirrorlist | default( '' ) }}"
+    file: "{{ item.dest }}"
+    gpgkey: "{{ item.gpgkey | default( '' )}}"
+    gpgcheck: "{{ item.gpgcheck | default( 'false' )}}"
+    enabled: true
+    enablegroups: true
+    sslverify: "{{ item.sslverify | default( false ) }}"
+    sslclientcert: "{{ item.sslclientcert | default( '' ) }}"
+    sslclientkey: "{{ item.sslclientkey | default( '' ) }}"
+  with_items: "{{ linux_package_sources_yum }}"
+  when: item.mirrorlist is defined
+  register: task_result_1
+
+- name: YUM_REPOSITORY | Configure yum sources
+  become: true
+  become_user: root
+  yum_repository:
+    name: "{{ item.name}}"
+    description: "{{ item.name}}"
+    baseurl: "{{ item.baseurl | default( '' ) }}"
+    file: "{{ item.dest }}"
+    gpgkey: "{{ item.gpgkey | default( '' )}}"
+    gpgcheck: "{{ item.gpgcheck | default( 'false' )}}"
+    enabled: true
+    enablegroups: true
+    sslverify: "{{ item.sslverify | default( false ) }}"
+    sslclientcert: "{{ item.sslclientcert | default( '' ) }}"
+    sslclientkey: "{{ item.sslclientkey | default( '' ) }}"
+  with_items: "{{ linux_package_sources_yum }}"
+  when: item.baseurl is defined
+  register: task_result_2
+
+- name: flush yum cache
+  become: true
+  become_user: root
+  command: yum clean all
+  args:
+    warn: false
+  when: task_result_1.changed or task_result_2.changed
+

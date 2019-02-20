@@ -1,0 +1,4 @@
+---
+# include tasks for different OS -> Don't allow for Redhat (updated via ar_redhat_satellite)
+- name: including tasks for current platform -> {{ ansible_os_family }}
+  include: "{{ ansible_os_family }}.yml"

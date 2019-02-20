@@ -1,0 +1,30 @@
+---
+
+linux_package_sources_apt:
+  - repo: 'deb [ arch=amd64 ] http://us.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }} main restricted universe'
+    dest: /etc/apt/sources.list.d/default.list
+
+  - repo: 'deb [ arch=amd64 ] http://us.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-updates main restricted universe'
+    dest: /etc/apt/sources.list.d/default.list
+
+  - repo: 'deb [ arch=amd64 ] http://us.archive.ubuntu.com/ubuntu/ {{ ansible_distribution_release }}-security main restricted universe multiverse'
+    dest: /etc/apt/sources.list.d/default.list
+
+linux_package_sources_yum:
+  - name: CentOS-7-Base
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=os&infra=$infra
+    dest: /etc/yum.repos.d/default
+    gpgcheck: true
+    gpgkey: https://www.centos.org/keys/RPM-GPG-KEY-CentOS-7
+
+  - name: CentOS-7-Updates
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=updates&infra=$infra
+    dest: /etc/yum.repos.d/default
+    gpgcheck: true
+    gpgkey: https://www.centos.org/keys/RPM-GPG-KEY-CentOS-7
+
+  - name: CentOS-7-Extras
+    mirrorlist: http://mirrorlist.centos.org/?release=$releasever&arch=$basearch&repo=extras&infra=$infra
+    dest: /etc/yum.repos.d/default
+    gpgcheck: true
+    gpgkey: https://www.centos.org/keys/RPM-GPG-KEY-CentOS-7

@@ -1,0 +1,29 @@
+---
+
+- name: FILE | Remove default repo file
+  become: true
+  become_user: root
+  file:
+    path: /etc/apt/sources.list
+    state: absent
+
+- name: LINEINFILE | Add APT sources
+  become: true
+  become_user: root
+  lineinfile:
+    path: "{{ item.dest }}"
+    owner: root
+    group: root
+    mode: 'u=rw,g=r,o=r'
+    line: "{{ item.repo }}"
+    state: present
+    create: true
+  with_items: "{{ linux_package_sources_apt }}"
+  register: task_result
+
+- name: update apt cache
+  become: true
+  become_user: root
+  apt:
+    update_cache: true
+  when: task_result.changed
