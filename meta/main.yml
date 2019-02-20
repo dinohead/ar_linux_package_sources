@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  author: Derek 'dRock' Halsey
+  description: Configures apt and yum sources on a linux client
+  company: Dinohead LLC
+  license: MIT
+  min_ansible_version: 2.7
+dependencies: []
