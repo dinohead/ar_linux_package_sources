@@ -39,7 +39,7 @@
     file: "{{ item.dest }}"
     gpgkey: "{{ item.gpgkey | default( '' )}}"
     gpgcheck: "{{ item.gpgcheck | default( 'false' )}}"
-    enabled: true
+    enabled: "{{ item.enabled | default( 'true' )}}"
     enablegroups: true
     sslverify: "{{ item.sslverify | default( false ) }}"
     sslclientcert: "{{ item.sslclientcert | default( '' ) }}"
@@ -58,7 +58,7 @@
     file: "{{ item.dest }}"
     gpgkey: "{{ item.gpgkey | default( '' )}}"
     gpgcheck: "{{ item.gpgcheck | default( 'false' )}}"
-    enabled: true
+    enabled: "{{ item.enabled | default( 'true' )}}"
     enablegroups: true
     sslverify: "{{ item.sslverify | default( false ) }}"
     sslclientcert: "{{ item.sslclientcert | default( '' ) }}"
